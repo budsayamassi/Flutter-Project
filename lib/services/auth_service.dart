@@ -19,12 +19,9 @@ class AuthService {
     return result.user;
   }
 
-  Future<void> resetPassword(String email) async {
-    await _auth.sendPasswordResetEmail(email: email);
-  }
-
   // Firebase บังคับให้ยืนยันรหัสผ่านเดิมก่อนเปลี่ยนรหัสใหม่
-  Future<void> changePassword(String currentPassword, String newPassword) async {
+  Future<void> changePassword(
+      String currentPassword, String newPassword) async {
     final user = _auth.currentUser!;
     final credential = EmailAuthProvider.credential(
       email: user.email!,

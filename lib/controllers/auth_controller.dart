@@ -35,16 +35,6 @@ class AuthController {
       return _errorText(e.code, isThai);
     }
   }
-
-  Future<String?> resetPassword(String email, bool isThai) async {
-    try {
-      await _authService.resetPassword(email.trim());
-      return null;
-    } on FirebaseAuthException catch (e) {
-      return _errorText(e.code, isThai);
-    }
-  }
-
   Future<String?> changePassword(String current, String newPassword, bool isThai) async {
     try {
       await _authService.changePassword(current, newPassword);

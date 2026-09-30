@@ -7,7 +7,6 @@ import '../controllers/auth_controller.dart';
 import '../providers/settings_provider.dart';
 import '../widgets/app_logo.dart';
 import '../widgets/ui_helpers.dart';
-import 'forgot_password_page.dart';
 import 'main_page.dart';
 import 'register_page.dart';
 
@@ -30,7 +29,9 @@ class _LoginPageState extends State<LoginPage> {
 
     // ตรวจสอบข้อมูลในฟอร์มก่อน ถ้าไม่ครบจะได้ false
     if (!_formKey.currentState!.saveAndValidate()) {
-      showMessage(context, s.tr('กรุณากรอกข้อมูลให้ครบถ้วน', 'Please fill in all fields'), isError: true);
+      showMessage(context,
+          s.tr('กรุณากรอกข้อมูลให้ครบถ้วน', 'Please fill in all fields'),
+          isError: true);
       return;
     }
 
@@ -78,8 +79,12 @@ class _LoginPageState extends State<LoginPage> {
                       prefixIcon: const Icon(Icons.email_outlined),
                     ),
                     validator: FormBuilderValidators.compose([
-                      FormBuilderValidators.required(errorText: s.tr('กรุณากรอกอีเมล', 'Please enter email')),
-                      FormBuilderValidators.email(errorText: s.tr('รูปแบบอีเมลไม่ถูกต้อง', 'Invalid email')),
+                      FormBuilderValidators.required(
+                          errorText:
+                              s.tr('กรุณากรอกอีเมล', 'Please enter email')),
+                      FormBuilderValidators.email(
+                          errorText:
+                              s.tr('รูปแบบอีเมลไม่ถูกต้อง', 'Invalid email')),
                     ]),
                   ),
                   const SizedBox(height: 12),
@@ -91,26 +96,19 @@ class _LoginPageState extends State<LoginPage> {
                       prefixIcon: const Icon(Icons.lock_outline),
                       // ปุ่มดู/ซ่อนรหัสผ่าน
                       suffixIcon: IconButton(
-                        icon: Icon(_hidePassword ? Icons.visibility_off : Icons.visibility),
-                        onPressed: () => setState(() => _hidePassword = !_hidePassword),
+                        icon: Icon(_hidePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility),
+                        onPressed: () =>
+                            setState(() => _hidePassword = !_hidePassword),
                       ),
                     ),
                     validator: FormBuilderValidators.required(
-                      errorText: s.tr('กรุณากรอกรหัสผ่าน', 'Please enter password'),
+                      errorText:
+                          s.tr('กรุณากรอกรหัสผ่าน', 'Please enter password'),
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const ForgotPasswordPage()),
-                        );
-                      },
-                      child: Text(s.tr('ลืมรหัสผ่าน?', 'Forgot password?')),
-                    ),
-                  ),
+                  const SizedBox(height: 8),
                   const SizedBox(height: 8),
                   ElevatedButton(
                     onPressed: _loading ? null : _login,
@@ -118,7 +116,8 @@ class _LoginPageState extends State<LoginPage> {
                         ? const SizedBox(
                             width: 22,
                             height: 22,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                            child: CircularProgressIndicator(
+                                strokeWidth: 2, color: Colors.white),
                           )
                         : Text(s.tr('เข้าสู่ระบบ', 'Log in')),
                   ),
@@ -131,7 +130,8 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => const RegisterPage()),
+                            MaterialPageRoute(
+                                builder: (_) => const RegisterPage()),
                           );
                         },
                         child: Text(s.tr('สมัครสมาชิก', 'Sign up')),
