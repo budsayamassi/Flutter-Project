@@ -1,0 +1,44 @@
+name: questly
+description: Questly - แอปจัดการงาน (To-do) พร้อมระบบจัดลำดับความสำคัญและ XP/Level
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+  # Firebase (บทที่ 10-11)
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1
+  cloud_firestore: ^5.4.4
+
+  # State Management (บทที่ 7)
+  provider: ^6.1.2
+
+  # เก็บการตั้งค่าในเครื่อง (บทที่ 9)
+  shared_preferences: ^2.3.2
+
+  # ฟอร์มและการตรวจสอบข้อมูล (บทที่ 6)
+  flutter_form_builder: ^10.0.1
+  form_builder_validators: ^11.1.2
+
+  # UI (บทที่ 4)
+  flutter_slidable: ^4.0.0
+  flutter_animate: ^4.5.2
+
+  # จัดรูปแบบวันที่
+  intl: any
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true

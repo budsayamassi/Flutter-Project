@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "463899795145",
+    "project_id": "questly-efe89",
+    "storage_bucket": "questly-efe89.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:463899795145:android:c5d12f7bae8cce8c2eb718",
+        "android_client_info": {
+          "package_name": "com.questly.questly"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWbxDPx2k6hU_Sbz2lN_higoQkgS7SkOQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
