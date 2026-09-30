@@ -7,7 +7,7 @@ import 'home_page.dart';
 import 'profile_page.dart';
 import 'task_list_page.dart';
 
-// โครงหลักหลัง Login: มีแถบเมนูด้านล่าง (BottomNavigationBar บทที่ 5)
+// โครงหลักหลัง Login: แถบเมนูด้านล่าง 4 แท็บ (บทที่ 5)
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
@@ -35,15 +35,30 @@ class _MainPageState extends State<MainPage> {
 
     return Scaffold(
       body: IndexedStack(index: _currentIndex, children: pages),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _changeTab,
-        type: BottomNavigationBarType.fixed,
-        items: [
-          BottomNavigationBarItem(icon: const Icon(Icons.home_rounded), label: s.tr('หน้าหลัก', 'Home')),
-          BottomNavigationBarItem(icon: const Icon(Icons.checklist_rounded), label: s.tr('งาน', 'Tasks')),
-          BottomNavigationBarItem(icon: const Icon(Icons.calendar_month_rounded), label: s.tr('ปฏิทิน', 'Calendar')),
-          BottomNavigationBarItem(icon: const Icon(Icons.person_rounded), label: s.tr('โปรไฟล์', 'Profile')),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _currentIndex,
+        onDestinationSelected: _changeTab,
+        destinations: [
+          NavigationDestination(
+            icon: const Icon(Icons.home_outlined),
+            selectedIcon: const Icon(Icons.home_rounded),
+            label: s.tr('หน้าหลัก', 'Home'),
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.checklist_rounded),
+            selectedIcon: const Icon(Icons.checklist_rtl_rounded),
+            label: s.tr('งาน', 'Tasks'),
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.calendar_month_outlined),
+            selectedIcon: const Icon(Icons.calendar_month_rounded),
+            label: s.tr('ปฏิทิน', 'Calendar'),
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.person_outline_rounded),
+            selectedIcon: const Icon(Icons.person_rounded),
+            label: s.tr('โปรไฟล์', 'Profile'),
+          ),
         ],
       ),
     );

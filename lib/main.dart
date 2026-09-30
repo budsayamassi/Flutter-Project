@@ -55,6 +55,18 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
         FormBuilderLocalizations.delegate,
       ],
+      // Responsive (บทที่ 4): เมื่อเปิดบน Chrome จอกว้าง ให้แอปอยู่ตรงกลางกว้างไม่เกิน 480px เหมือนมือถือ
+      builder: (context, child) {
+        final isDark = settings.isDark;
+        return Container(
+          color: isDark ? Colors.black : const Color(0xFFE9EDF5),
+          alignment: Alignment.center,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 480),
+            child: child,
+          ),
+        );
+      },
       home: const SplashPage(),
     );
   }

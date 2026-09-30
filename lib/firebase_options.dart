@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -56,7 +53,6 @@ class DefaultFirebaseOptions {
     projectId: 'questly-efe89',
     storageBucket: 'questly-efe89.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBkIVCuW5AhSv2GvRY5Z_Cj6eeKulvLqD0',
     appId: '1:463899795145:ios:079999880dc8e47c2eb718',
@@ -64,5 +60,13 @@ class DefaultFirebaseOptions {
     projectId: 'questly-efe89',
     storageBucket: 'questly-efe89.firebasestorage.app',
     iosBundleId: 'com.questly.questly',
+  );
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyCJa-cashmuwaa5yv9wfqIFLfZt7BOrY4g',
+    appId: '1:463899795145:web:192c59f18426d2352eb718',
+    messagingSenderId: '463899795145',
+    projectId: 'questly-efe89',
+    authDomain: 'questly-efe89.firebaseapp.com',
+    storageBucket: 'questly-efe89.firebasestorage.app',
   );
 }

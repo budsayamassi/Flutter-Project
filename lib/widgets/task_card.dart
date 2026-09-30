@@ -32,9 +32,9 @@ class TaskCard extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: 12),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         child: Slidable(
           key: ValueKey(task.id),
           // ปัดจากซ้ายไปขวา → แก้ไข
@@ -45,7 +45,7 @@ class TaskCard extends StatelessWidget {
                 onPressed: (_) => _openEdit(context),
                 backgroundColor: kPrimary,
                 foregroundColor: Colors.white,
-                icon: Icons.edit,
+                icon: Icons.edit_rounded,
                 label: s.tr('แก้ไข', 'Edit'),
               ),
             ],
@@ -58,7 +58,7 @@ class TaskCard extends StatelessWidget {
                 onPressed: (_) => _confirmDelete(context, s),
                 backgroundColor: kRed,
                 foregroundColor: Colors.white,
-                icon: Icons.delete,
+                icon: Icons.delete_rounded,
                 label: s.tr('ลบ', 'Delete'),
               ),
             ],
@@ -72,19 +72,32 @@ class TaskCard extends StatelessWidget {
                 );
               },
               child: Padding(
-                padding: const EdgeInsets.all(14),
+                padding: const EdgeInsets.fromLTRB(12, 14, 14, 14),
                 child: Row(
                   children: [
+                    // แถบสีประจำหมวดหมู่
+                    Container(
+                      width: 4,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: task.isDone ? kGrey.withValues(alpha: 0.3) : color,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+
                     // ปุ่มติ๊กเสร็จ
                     GestureDetector(
                       onTap: () => _toggleDone(context, s),
                       child: Icon(
-                        task.isDone ? Icons.check_circle : Icons.radio_button_unchecked,
-                        color: task.isDone ? kGreen : kGrey,
+                        task.isDone ? Icons.check_circle_rounded : Icons.circle_outlined,
+                        color: task.isDone ? kGreen : kGrey.withValues(alpha: 0.6),
                         size: 28,
                       ),
                     ),
                     const SizedBox(width: 12),
+
+                    // ชื่องาน + เวลา + หมวดหมู่
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,15 +108,15 @@ class TaskCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w700,
                               color: task.isDone ? kGrey : null,
                               decoration: task.isDone ? TextDecoration.lineThrough : null,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: 6),
                           Row(
                             children: [
-                              Icon(Icons.access_time, size: 14, color: task.isOverdue ? kRed : kGrey),
+                              Icon(Icons.schedule_rounded, size: 14, color: task.isOverdue ? kRed : kGrey),
                               const SizedBox(width: 4),
                               Flexible(
                                 child: Text(
@@ -115,14 +128,14 @@ class TaskCard extends StatelessWidget {
                               ),
                               const SizedBox(width: 8),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                                 decoration: BoxDecoration(
                                   color: color.withValues(alpha: 0.12),
-                                  borderRadius: BorderRadius.circular(6),
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
                                   TaskModel.categoryText(task.category, s.isThai),
-                                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: color),
+                                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: color),
                                 ),
                               ),
                             ],
@@ -130,7 +143,17 @@ class TaskCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    if (!task.isDone) Icon(Icons.flag, size: 18, color: priorityColor(level)),
+
+                    // ธงบอกความเร่งด่วน
+                    if (!task.isDone)
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: priorityColor(level).withValues(alpha: 0.12),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(Icons.flag_rounded, size: 16, color: priorityColor(level)),
+                      ),
                   ],
                 ),
               ),
@@ -149,10 +172,11 @@ class TaskCard extends StatelessWidget {
   }
 
   Future<void> _toggleDone(BuildContext context, SettingsProvider s) async {
-    final xp = await TaskController().toggleDone(task);
+    final wasDone = task.isDone;
+    await TaskController().toggleDone(task);
     if (!context.mounted) return;
-    if (xp > 0) {
-      showMessage(context, '🎉 ${s.tr('เยี่ยมมาก!', 'Great job!')} +$xp XP');
+    if (!wasDone) {
+      showMessage(context, s.tr('ทำเสร็จแล้ว เยี่ยมมาก!', 'Done, great job!'));
     }
   }
 

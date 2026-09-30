@@ -35,13 +35,4 @@ class UserService {
   Future<void> updateName(String name) async {
     await _userDoc().update({'name': name});
   }
-
-  Future<void> updateStats(UserProfile profile) async {
-    await _userDoc().update({
-      'xp': profile.xp,
-      'streak': profile.streak,
-      'lastActiveDate': profile.lastActiveDate,
-      'totalDone': profile.totalDone,
-    });
-  }
 }

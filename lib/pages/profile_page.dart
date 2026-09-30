@@ -65,36 +65,34 @@ class _ProfilePageState extends State<ProfilePage> {
           final name = profile?.name ?? 'User';
 
           return ListView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
             children: [
-              // ---------- รูป + ชื่อ ----------
-              Center(
-                child: CircleAvatar(
-                  radius: 48,
-                  backgroundColor: kPrimary.withValues(alpha: 0.15),
-                  child: Text(
-                    name.isEmpty ? '?' : name[0].toUpperCase(),
-                    style: const TextStyle(fontSize: 40, color: kPrimary, fontWeight: FontWeight.bold),
-                  ),
+              // ---------- การ์ดหัวข้อ: รูป + ชื่อ + อีเมล ----------
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  gradient: kHeaderGradient,
+                  borderRadius: BorderRadius.circular(24),
                 ),
-              ),
-              const SizedBox(height: 12),
-              Text(name, textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-              Text(profile?.email ?? '', textAlign: TextAlign.center, style: const TextStyle(color: kGrey)),
-              const SizedBox(height: 20),
-
-              // ---------- สถิติ ----------
-              if (profile != null)
-                Row(
+                child: Column(
                   children: [
-                    _statBox(profile.plantEmoji, 'Level ${profile.level}', '${profile.xp} XP'),
-                    const SizedBox(width: 10),
-                    _statBox('🔥', '${profile.streak}', s.tr('วันติดต่อกัน', 'day streak')),
-                    const SizedBox(width: 10),
-                    _statBox('✅', '${profile.totalDone}', s.tr('งานที่เสร็จ', 'completed')),
+                    CircleAvatar(
+                      radius: 44,
+                      backgroundColor: Colors.white,
+                      child: Text(
+                        name.isEmpty ? '?' : name[0].toUpperCase(),
+                        style: const TextStyle(fontSize: 38, color: kPrimary, fontWeight: FontWeight.w800),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(name,
+                        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: Colors.white)),
+                    Text(profile?.email ?? '', style: const TextStyle(color: Colors.white70)),
                   ],
                 ),
+              ),
+              const SizedBox(height: 16),
+
               const SizedBox(height: 24),
 
               // ---------- บัญชี ----------
@@ -102,7 +100,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Column(
                   children: [
                     ListTile(
-                      leading: const Icon(Icons.person, color: kPrimary),
+                      leading: _iconBox(Icons.person, kPrimary),
                       title: Text(s.tr('แก้ไขข้อมูล', 'Edit profile')),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () {
@@ -113,7 +111,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       },
                     ),
                     ListTile(
-                      leading: const Icon(Icons.lock, color: kGrey),
+                      leading: _iconBox(Icons.lock, kGrey),
                       title: Text(s.tr('เปลี่ยนรหัสผ่าน', 'Change password')),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () {
@@ -133,7 +131,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Column(
                   children: [
                     ListTile(
-                      leading: const Icon(Icons.language, color: kGreen),
+                      leading: _iconBox(Icons.language, kGreen),
                       title: Text(s.tr('ภาษา', 'Language')),
                       trailing: DropdownButton<bool>(
                         value: s.isThai,
@@ -148,7 +146,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                     SwitchListTile(
-                      secondary: const Icon(Icons.dark_mode, color: kPurple),
+                      secondary: _iconBox(Icons.dark_mode, kPurple),
                       title: Text(s.tr('ธีมมืด', 'Dark mode')),
                       value: s.isDark,
                       onChanged: (value) => context.read<SettingsProvider>().setDark(value),
@@ -177,21 +175,15 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _statBox(String emoji, String value, String label) {
-    return Expanded(
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          child: Column(
-            children: [
-              Text(emoji, style: const TextStyle(fontSize: 24)),
-              const SizedBox(height: 4),
-              Text(value, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
-              Text(label, style: const TextStyle(fontSize: 12, color: kGrey)),
-            ],
-          ),
-        ),
+  // ไอคอนในกล่องสีอ่อนมุมมน
+  Widget _iconBox(IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(12),
       ),
+      child: Icon(icon, color: color, size: 20),
     );
   }
 }

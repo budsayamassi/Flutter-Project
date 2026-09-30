@@ -40,6 +40,12 @@ class _TaskListPageState extends State<TaskListPage> {
         appBar: AppBar(
           title: Text(s.tr('งานทั้งหมด', 'All Tasks')),
           bottom: TabBar(
+            labelColor: kPrimary,
+            unselectedLabelColor: kGrey,
+            indicatorColor: kPrimary,
+            indicatorSize: TabBarIndicatorSize.label,
+            dividerColor: Colors.transparent,
+            labelStyle: const TextStyle(fontWeight: FontWeight.w700),
             tabs: [
               Tab(text: s.tr('ทั้งหมด', 'All')),
               const Tab(text: 'To Do'),
@@ -91,7 +97,7 @@ class _TaskListPageState extends State<TaskListPage> {
             Padding(
               padding: const EdgeInsets.only(bottom: 4),
               child: Text(
-                s.tr('💡 ปัดขวาเพื่อแก้ไข · ปัดซ้ายเพื่อลบ', '💡 Swipe right to edit · left to delete'),
+                s.tr('ปัดขวาเพื่อแก้ไข · ปัดซ้ายเพื่อลบ', 'Swipe right to edit · left to delete'),
                 style: const TextStyle(fontSize: 12, color: kGrey),
               ),
             ),

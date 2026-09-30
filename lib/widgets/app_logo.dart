@@ -15,15 +15,18 @@ class AppLogo extends StatelessWidget {
           width: size,
           height: size,
           decoration: BoxDecoration(
-            color: kPrimary,
-            borderRadius: BorderRadius.circular(size * 0.28),
+            gradient: kHeaderGradient,
+            borderRadius: BorderRadius.circular(size * 0.3),
+            boxShadow: [
+              BoxShadow(color: kPrimary.withValues(alpha: 0.3), blurRadius: 18, offset: const Offset(0, 8)),
+            ],
           ),
-          child: Icon(Icons.task_alt, color: Colors.white, size: size * 0.55),
+          child: Icon(Icons.task_alt_rounded, color: Colors.white, size: size * 0.55),
         ),
-        const SizedBox(height: 14),
+        const SizedBox(height: 16),
         Text(
           'Questly',
-          style: TextStyle(fontSize: size * 0.4, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: size * 0.4, fontWeight: FontWeight.w800, letterSpacing: -0.5),
         ),
       ],
     );

@@ -46,3 +46,6 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Chrome profile ที่ใช้ตอนรันบนเว็บ
+.chrome_profile/

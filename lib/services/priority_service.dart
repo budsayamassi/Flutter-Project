@@ -1,8 +1,6 @@
-import 'package:intl/intl.dart';
-
 import '../models/task_model.dart';
 
-// Business Logic สำหรับคำนวณ Priority Score, XP และ Streak
+// Business Logic สำหรับคำนวณ Priority Score
 // (ไม่ยุ่งกับหน้าจอ เหมือน BmrService ในห้องเรียน)
 class PriorityService {
   // ความเร่งด่วน: เลยกำหนด=5, วันนี้=4, พรุ่งนี้=3, ภายใน 3 วัน=2, ภายใน 7 วัน=1, นานกว่านั้น=0
@@ -32,33 +30,5 @@ class PriorityService {
     if (s >= 9) return 3;
     if (s >= 6) return 2;
     return 1;
-  }
-
-  // XP ที่ได้: ความสำคัญ x 10 และได้โบนัส +5 ถ้าเสร็จก่อนกำหนด
-  int xpFor(TaskModel task) {
-    int xp = task.importance * 10;
-    if (DateTime.now().isBefore(task.dueDate)) {
-      xp = xp + 5;
-    }
-    return xp;
-  }
-
-  // แปลงวันที่เป็นข้อความ เช่น 2026-09-30
-  String dayKey(DateTime date) {
-    return DateFormat('yyyy-MM-dd').format(date);
-  }
-
-  // คำนวณ Streak ใหม่ (จำนวนวันติดต่อกันที่ทำงานเสร็จอย่างน้อย 1 งาน)
-  int newStreak(String lastActiveDate, int currentStreak) {
-    final today = dayKey(DateTime.now());
-    final yesterday = dayKey(DateTime.now().subtract(const Duration(days: 1)));
-
-    if (lastActiveDate == today) {
-      return currentStreak; // วันนี้นับไปแล้ว
-    } else if (lastActiveDate == yesterday) {
-      return currentStreak + 1; // ต่อเนื่องจากเมื่อวาน
-    } else {
-      return 1; // เริ่มนับใหม่
-    }
   }
 }

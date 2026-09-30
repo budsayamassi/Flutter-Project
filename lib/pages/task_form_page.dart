@@ -35,6 +35,23 @@ class _TaskFormPageState extends State<TaskFormPage> {
     return DateTime(day.year, day.month, day.day, 18, 0);
   }
 
+  // รายการเวลาให้เลือก ทุก 15 นาที: 00:00, 00:15, ... 23:45
+  List<String> _timeOptions() {
+    final List<String> times = [];
+    for (int h = 0; h < 24; h++) {
+      for (int m = 0; m < 60; m += 15) {
+        times.add('${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}');
+      }
+    }
+    return times;
+  }
+
+  // แปลงเวลาเริ่มต้นเป็นข้อความ (ปัดนาทีลงให้ตรงกับรายการ เช่น 18:20 → 18:15)
+  String _initialTime(DateTime date) {
+    final minute = (date.minute ~/ 15) * 15;
+    return '${date.hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+  }
+
   Future<void> _save() async {
     final s = context.read<SettingsProvider>();
     if (!_formKey.currentState!.saveAndValidate()) {
@@ -43,25 +60,30 @@ class _TaskFormPageState extends State<TaskFormPage> {
     }
 
     final data = _formKey.currentState!.value;
+
+    // รวม "วันที่" กับ "เวลา" ที่เลือกเป็น DateTime เดียว
+    final DateTime date = data['dueDate'];
+    final String time = data['dueTime']; // เช่น "18:30"
+    final hour = int.parse(time.split(':')[0]);
+    final minute = int.parse(time.split(':')[1]);
+    final dueDate = DateTime(date.year, date.month, date.day, hour, minute);
+
     final task = TaskModel(
       id: widget.task?.id ?? '',
       title: data['title'],
       description: data['description'] ?? '',
       category: data['category'],
       importance: data['importance'],
-      dueDate: data['dueDate'],
+      dueDate: dueDate,
       status: data['status'],
-      xpGiven: widget.task?.xpGiven ?? false,
     );
 
     setState(() => _saving = true);
-    final xp = await _controller.saveTask(task);
+    await _controller.saveTask(task);
     if (!mounted) return;
     setState(() => _saving = false);
 
-    String message = _isEdit ? s.tr('บันทึกการแก้ไขแล้ว', 'Changes saved') : s.tr('เพิ่มงานแล้ว', 'Task added');
-    if (xp > 0) message = '$message 🎉 +$xp XP';
-    showMessage(context, message);
+    showMessage(context, _isEdit ? s.tr('บันทึกการแก้ไขแล้ว', 'Changes saved') : s.tr('เพิ่มงานแล้ว', 'Task added'));
 
     // ส่งค่า true กลับไปหน้าก่อนหน้า (return data from page บทที่ 5)
     Navigator.pop(context, true);
@@ -107,14 +129,47 @@ class _TaskFormPageState extends State<TaskFormPage> {
                       .toList(),
                 ),
 
-                _label(s.tr('วันครบกำหนด', 'Due date')),
-                FormBuilderDateTimePicker(
-                  name: 'dueDate',
-                  initialValue: task?.dueDate ?? _defaultDate(),
-                  inputType: InputType.both,
-                  format: DateFormat('d MMM yyyy  HH:mm', s.isThai ? 'th' : 'en'),
-                  decoration: const InputDecoration(suffixIcon: Icon(Icons.calendar_month)),
-                  validator: FormBuilderValidators.required(errorText: s.tr('กรุณาเลือกวัน', 'Please pick a date')),
+                // วันครบกำหนด (เลือกวันจากปฏิทิน) + เวลา (กดเลือกจากรายการ)
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _label(s.tr('วันครบกำหนด', 'Due date')),
+                          FormBuilderDateTimePicker(
+                            name: 'dueDate',
+                            initialValue: task?.dueDate ?? _defaultDate(),
+                            inputType: InputType.date,
+                            format: DateFormat('d MMM yyyy', s.isThai ? 'th' : 'en'),
+                            decoration: const InputDecoration(suffixIcon: Icon(Icons.calendar_month_rounded)),
+                            validator: FormBuilderValidators.required(
+                                errorText: s.tr('กรุณาเลือกวัน', 'Please pick a date')),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 2,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _label(s.tr('เวลา', 'Time')),
+                          FormBuilderDropdown<String>(
+                            name: 'dueTime',
+                            initialValue: _initialTime(task?.dueDate ?? _defaultDate()),
+                            menuMaxHeight: 300,
+                            items: _timeOptions()
+                                .map((t) => DropdownMenuItem(value: t, child: Text(t)))
+                                .toList(),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
 
                 _label(s.tr('สถานะ', 'Status')),
@@ -139,13 +194,6 @@ class _TaskFormPageState extends State<TaskFormPage> {
                           ))
                       .toList(),
                 ),
-                const SizedBox(height: 6),
-                Text(
-                  s.tr('⭐ ทำเสร็จได้ XP = ความสำคัญ × 10 (+5 ถ้าเสร็จก่อนกำหนด)',
-                      '⭐ XP = importance × 10 (+5 if finished early)'),
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
-                ),
-
                 const SizedBox(height: 28),
                 ElevatedButton(
                   onPressed: _saving ? null : _save,

@@ -10,7 +10,6 @@ class TaskModel {
   int importance; // 1 = ต่ำ, 2 = กลาง, 3 = สูง
   DateTime dueDate;
   String status; // todo, doing, done
-  bool xpGiven; // ได้รับ XP จากงานนี้ไปแล้วหรือยัง (กันได้ XP ซ้ำ)
 
   TaskModel({
     this.id = '',
@@ -20,7 +19,6 @@ class TaskModel {
     this.importance = 2,
     required this.dueDate,
     this.status = 'todo',
-    this.xpGiven = false,
   });
 
   bool get isDone => status == 'done';
@@ -37,7 +35,6 @@ class TaskModel {
       'importance': importance,
       'dueDate': Timestamp.fromDate(dueDate),
       'status': status,
-      'xpGiven': xpGiven,
     };
   }
 
@@ -51,7 +48,6 @@ class TaskModel {
       importance: data['importance'] ?? 2,
       dueDate: (data['dueDate'] as Timestamp).toDate(),
       status: data['status'] ?? 'todo',
-      xpGiven: data['xpGiven'] ?? false,
     );
   }
 

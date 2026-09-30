@@ -82,8 +82,6 @@ class TaskDetailPage extends StatelessWidget {
                 _infoRow(Icons.star, kPurple, s.tr('ความสำคัญ', 'Importance'),
                     TaskModel.importanceText(task.importance, s.isThai)),
                 _infoRow(Icons.flag, priorityColor(level), 'Priority Score', '${controller.score(task)} / 11'),
-                _infoRow(Icons.emoji_events, kGreen, s.tr('รางวัล', 'Reward'),
-                    task.xpGiven ? s.tr('ได้รับ XP แล้ว ✓', 'XP received ✓') : '${controller.xpFor(task)} XP'),
               ],
             ),
           ),
@@ -93,9 +91,10 @@ class TaskDetailPage extends StatelessWidget {
             icon: Icon(task.isDone ? Icons.undo : Icons.check),
             label: Text(task.isDone ? s.tr('ยังไม่เสร็จ', 'Mark as not done') : s.tr('ทำเสร็จแล้ว', 'Mark as done')),
             onPressed: () async {
-              final xp = await controller.toggleDone(task);
+              final wasDone = task.isDone;
+              await controller.toggleDone(task);
               if (!context.mounted) return;
-              if (xp > 0) showMessage(context, '🎉 ${s.tr('เยี่ยมมาก!', 'Great job!')} +$xp XP');
+              if (!wasDone) showMessage(context, s.tr('ทำเสร็จแล้ว เยี่ยมมาก!', 'Done, great job!'));
               Navigator.pop(context);
             },
           ),

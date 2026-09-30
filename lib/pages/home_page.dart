@@ -52,37 +52,30 @@ class _HomePageState extends State<HomePage> {
                 final topTasks = _controller.topPriorities(tasks);
 
                 return ListView(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
                   children: [
                     _buildHeader(s, profile),
                     const SizedBox(height: 20),
                     _buildProgressCard(s, todayDone, todayTasks.length),
-                    const SizedBox(height: 12),
-                    if (profile != null) _buildLevelCard(s, profile),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 16),
+                    _buildStatsRow(s, tasks),
+                    const SizedBox(height: 16),
                     _buildButtons(s),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 28),
                     Text(
                       s.tr('ควรทำก่อน', 'Do first'),
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 4),
+                    Text(
+                      s.tr('เรียงตาม Priority Score จากมากไปน้อย', 'Sorted by Priority Score'),
+                      style: const TextStyle(fontSize: 13, color: kGrey),
+                    ),
+                    const SizedBox(height: 12),
                     if (taskSnap.connectionState == ConnectionState.waiting)
                       const Center(child: CircularProgressIndicator())
                     else if (topTasks.isEmpty)
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(24),
-                          child: Column(
-                            children: [
-                              const Icon(Icons.celebration, size: 48, color: kGreen),
-                              const SizedBox(height: 8),
-                              Text(s.tr('เคลียร์งานหมดแล้ว!', 'All clear!'),
-                                  style: const TextStyle(fontWeight: FontWeight.w600)),
-                            ],
-                          ),
-                        ),
-                      )
+                      _buildEmpty(s)
                     else
                       Column(children: topTasks.map((t) => TaskCard(task: t)).toList()),
                   ],
@@ -106,12 +99,13 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(today, style: const TextStyle(color: kGrey)),
+              Text(today, style: const TextStyle(color: kGrey, fontSize: 14)),
+              const SizedBox(height: 2),
               Text(
-                '${s.tr('สวัสดี', 'Hi')}, $name 👋',
+                '${s.tr('สวัสดี', 'Hi')}, $name',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w800),
               ),
             ],
           ),
@@ -120,10 +114,10 @@ class _HomePageState extends State<HomePage> {
           onTap: () => widget.onChangeTab(3), // ไปแท็บโปรไฟล์
           child: CircleAvatar(
             radius: 24,
-            backgroundColor: kPrimary.withValues(alpha: 0.15),
+            backgroundColor: kPrimary,
             child: Text(
               name.isEmpty ? '?' : name[0].toUpperCase(),
-              style: const TextStyle(color: kPrimary, fontWeight: FontWeight.bold, fontSize: 20),
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
             ),
           ),
         ),
@@ -131,94 +125,102 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // ---------- ความคืบหน้าวันนี้ ----------
+  // ---------- ความคืบหน้าวันนี้ (การ์ดสีฟ้า Gradient) ----------
   Widget _buildProgressCard(SettingsProvider s, int done, int total) {
     final double percent = total == 0 ? 0 : done / total;
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 80,
-              height: 80,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  SizedBox(
-                    width: 80,
-                    height: 80,
-                    child: CircularProgressIndicator(
-                      value: percent,
-                      strokeWidth: 8,
-                      backgroundColor: kGrey.withValues(alpha: 0.2),
-                    ),
+    return Container(
+      padding: const EdgeInsets.all(22),
+      decoration: BoxDecoration(
+        gradient: kHeaderGradient,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(color: kPrimary.withValues(alpha: 0.25), blurRadius: 20, offset: const Offset(0, 8)),
+        ],
+      ),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 86,
+            height: 86,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
+                  width: 86,
+                  height: 86,
+                  child: CircularProgressIndicator(
+                    value: percent,
+                    strokeWidth: 9,
+                    strokeCap: StrokeCap.round,
+                    color: Colors.white,
+                    backgroundColor: Colors.white.withValues(alpha: 0.25),
                   ),
-                  Text('$done/$total', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                ],
-              ),
+                ),
+                Text(
+                  '$done/$total',
+                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: Colors.white),
+                ),
+              ],
             ),
-            const SizedBox(width: 20),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(s.tr('ความคืบหน้าวันนี้', "Today's progress"), style: const TextStyle(color: kGrey)),
-                  Text('${(percent * 100).round()}%',
-                      style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
-                  Text(
-                    total == 0
-                        ? s.tr('วันนี้ยังไม่มีงาน', 'No tasks today')
-                        : s.tr('ของงานวันนี้เสร็จแล้ว', "of today's tasks done"),
-                    style: const TextStyle(fontSize: 13, color: kGrey),
-                  ),
-                ],
-              ),
+          ),
+          const SizedBox(width: 22),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  s.tr('ความคืบหน้าวันนี้', "Today's progress"),
+                  style: const TextStyle(color: Colors.white70, fontSize: 14),
+                ),
+                Text(
+                  '${(percent * 100).round()}%',
+                  style: const TextStyle(fontSize: 34, fontWeight: FontWeight.w800, color: Colors.white),
+                ),
+                Text(
+                  total == 0
+                      ? s.tr('วันนี้ยังไม่มีงาน', 'No tasks today')
+                      : s.tr('ของงานวันนี้เสร็จแล้ว', "of today's tasks done"),
+                  style: const TextStyle(fontSize: 13, color: Colors.white70),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  // ---------- Level / XP / Streak ----------
-  Widget _buildLevelCard(SettingsProvider s, UserProfile profile) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
+  // ---------- สรุปจำนวนงาน: ทั้งหมด / เสร็จแล้ว / เลยกำหนด ----------
+  Widget _buildStatsRow(SettingsProvider s, List<TaskModel> tasks) {
+    final doneCount = tasks.where((t) => t.isDone).length;
+    final overdueCount = tasks.where((t) => t.isOverdue).length;
+
+    return Row(
+      children: [
+        _statBox(Icons.assignment_rounded, '${tasks.length}', s.tr('งานทั้งหมด', 'All tasks'), kPrimary),
+        const SizedBox(width: 10),
+        _statBox(Icons.check_circle_rounded, '$doneCount', s.tr('เสร็จแล้ว', 'Done'), kGreen),
+        const SizedBox(width: 10),
+        _statBox(Icons.schedule_rounded, '$overdueCount', s.tr('เลยกำหนด', 'Overdue'), kRed),
+      ],
+    );
+  }
+
+  Widget _statBox(IconData icon, String value, String label, Color color) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Column(
           children: [
-            Text(profile.plantEmoji, style: const TextStyle(fontSize: 40)),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text('Level ${profile.level}',
-                          style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
-                      const Spacer(),
-                      Text('🔥 ${profile.streak} ${s.tr('วัน', 'days')}',
-                          style: const TextStyle(color: kOrange, fontWeight: FontWeight.w600)),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(6),
-                    child: LinearProgressIndicator(
-                      value: profile.xpInLevel / 100,
-                      minHeight: 8,
-                      color: kGreen,
-                      backgroundColor: kGrey.withValues(alpha: 0.2),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text('${profile.xpInLevel} / 100 XP', style: const TextStyle(fontSize: 12, color: kGrey)),
-                ],
-              ),
-            ),
+            Icon(icon, color: color, size: 22),
+            const SizedBox(height: 4),
+            Text(value, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: color)),
+            Text(label, style: const TextStyle(fontSize: 12, color: kGrey)),
           ],
         ),
       ),
@@ -231,7 +233,7 @@ class _HomePageState extends State<HomePage> {
       children: [
         Expanded(
           child: _menuButton(
-            icon: Icons.add_circle_outline,
+            icon: Icons.add_rounded,
             label: s.tr('เพิ่มงาน', 'Add task'),
             color: kPrimary,
             onTap: () {
@@ -242,9 +244,9 @@ class _HomePageState extends State<HomePage> {
         const SizedBox(width: 12),
         Expanded(
           child: _menuButton(
-            icon: Icons.calendar_month,
+            icon: Icons.calendar_month_rounded,
             label: s.tr('ปฏิทิน', 'Calendar'),
-            color: kRed,
+            color: kTeal,
             onTap: () => widget.onChangeTab(2),
           ),
         ),
@@ -260,17 +262,45 @@ class _HomePageState extends State<HomePage> {
   }) {
     return Card(
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 18),
-          child: Column(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 14),
+          child: Row(
             children: [
-              Icon(icon, color: color, size: 32),
-              const SizedBox(height: 6),
-              Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Icon(icon, color: color),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(label, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+              ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmpty(SettingsProvider s) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(28),
+        child: Column(
+          children: [
+            const Icon(Icons.task_alt_rounded, size: 44, color: kGreen),
+            const SizedBox(height: 8),
+            Text(s.tr('เคลียร์งานหมดแล้ว!', 'All clear!'),
+                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+            const SizedBox(height: 4),
+            Text(s.tr('เพิ่มงานใหม่ หรือพักผ่อนสักหน่อย', 'Add a new task or take a break'),
+                style: const TextStyle(color: kGrey)),
+          ],
         ),
       ),
     );
